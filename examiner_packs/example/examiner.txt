@@ -1,0 +1,16 @@
+
+What is a fun letter?
+10	G
+4	X
+2	R
+2	S
+1	Theta
+1	Chocolate letters
+
+What is fun about Kinjin?
+3	Everything
+3	Me
+3	You
+2	Japan Feud
+2	Marco
+1	Oscar
