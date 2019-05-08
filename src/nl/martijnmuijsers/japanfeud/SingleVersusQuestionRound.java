@@ -47,7 +47,7 @@ public class SingleVersusQuestionRound {
 	public void showQuestion() {
 		questionShown = true;
 		new ShowVersusScreenWithQuestionMessage(question.getText()).sendToAllClients();
-		Log.response("Type the color of the team who answered first (this will show the answer boxes):");
+		Log.response("Type the color of the team who answered first [g,b] (this will show the answer boxes):");
 	}
 	
 	@Getter
@@ -101,7 +101,7 @@ public class SingleVersusQuestionRound {
 	}
 	
 	private void logOtherParticipants() {
-		Log.response("For each of the other participants, type the number (0 for wrong) of the answer they gave, and type 'rest' to show the answers left at the end, after 3 wrong guesses:");
+		Log.response("For each of the other participants, type the number (0 for wrong) of the answer they gave, and type 'rest' or 'r' to show the answers left at the end, after 3 wrong guesses:");
 	}
 	
 	private void logFirstResponseQuery() {

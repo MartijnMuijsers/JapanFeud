@@ -32,103 +32,88 @@ public class CommandReader implements Runnable {
 									if (line.equalsIgnoreCase("clear")) {
 										versusRound.ended();
 									}
-								} else {
-									if (!versusRound.hadTeamName(1)) {
-										if (line.contains("|")) {
-											Log.logInvalidDueToDelimiter();
-										} else {
-											versusRound.setTeamName(1, line);
-										}
+								} else if (!versusRound.hadTeamName(1)) {
+									if (line.contains("|")) {
+										Log.logInvalidDueToDelimiter();
 									} else {
-										if (!versusRound.hadTeamName(2)) {
-											if (line.contains("|")) {
-												Log.logInvalidDueToDelimiter();
-											} else {
-												versusRound.setTeamName(2, line);
-											}
+										versusRound.setTeamName(1, line);
+									}
+								} else if (!versusRound.hadTeamName(2)) {
+									if (line.contains("|")) {
+										Log.logInvalidDueToDelimiter();
+									} else {
+										versusRound.setTeamName(2, line);
+									}
+								} else {
+									SingleVersusQuestionRound singleVersusQuestionRound = versusRound.getCurrentSingleVersusRound();
+									if (!singleVersusQuestionRound.isQuestionShown()) {
+										if (line.equalsIgnoreCase("show")) {
+											singleVersusQuestionRound.showQuestion();
+										}
+									} else if (!singleVersusQuestionRound.hasOpenColor()) {
+										Color color = Color.parse(line);
+										if (color != null && color.isTeam()) {
+											singleVersusQuestionRound.setOpenColor(color);
 										} else {
-											SingleVersusQuestionRound singleVersusQuestionRound = versusRound.getCurrentSingleVersusRound();
-											if (!singleVersusQuestionRound.isQuestionShown()) {
-												if (line.equalsIgnoreCase("show")) {
-													singleVersusQuestionRound.showQuestion();
-												}
+											Color.logInvalid();
+										}
+									} else if (!singleVersusQuestionRound.hadFirstResponse()) {
+										Integer num = null;
+										try {
+											num = Integer.parseInt(line);
+										} catch (Exception e) {}
+										if (num != null && num >= 0 && num <= singleVersusQuestionRound.getQuestion().getAnswers().length) {
+											singleVersusQuestionRound.setFirstResponse(num);
+										} else {
+											Log.logInvalidNumber();
+										}
+									} else if (!singleVersusQuestionRound.hadSecondResponse()) {
+										if (line.equalsIgnoreCase("skip")) {
+											singleVersusQuestionRound.skipSecondResponse();
+										} else {
+											Integer num = null;
+											try {
+												num = Integer.parseInt(line);
+											} catch (Exception e) {}
+											if (num != null && num >= 0 && num <= singleVersusQuestionRound.getQuestion().getAnswers().length) {
+												singleVersusQuestionRound.setSecondResponse(num);
 											} else {
-												if (!singleVersusQuestionRound.hasOpenColor()) {
-													Color color = Color.parse(line);
-													if (color != null && color.isTeam()) {
-														singleVersusQuestionRound.setOpenColor(color);
-													} else {
-														Color.logInvalid();
-													}
-												} else {
-													if (!singleVersusQuestionRound.hadFirstResponse()) {
-														Integer num = null;
-														try {
-															num = Integer.parseInt(line);
-														} catch (Exception e) {}
-														if (num != null && num >= 0 && num <= singleVersusQuestionRound.getQuestion().getAnswers().length) {
-															singleVersusQuestionRound.setFirstResponse(num);
-														} else {
-															Log.logInvalidNumber();
-														}
-													} else {
-														if (!singleVersusQuestionRound.hadSecondResponse()) {
-															if (line.equalsIgnoreCase("skip")) {
-																singleVersusQuestionRound.skipSecondResponse();
-															} else {
-																Integer num = null;
-																try {
-																	num = Integer.parseInt(line);
-																} catch (Exception e) {}
-																if (num != null && num >= 0 && num <= singleVersusQuestionRound.getQuestion().getAnswers().length) {
-																	singleVersusQuestionRound.setSecondResponse(num);
-																} else {
-																	Log.logInvalidNumber();
-																}
-															}
-														} else {
-															if (!singleVersusQuestionRound.hasPlayingColor()) {
-																Color color = Color.parse(line);
-																if (color != null && color.isTeam()) {
-																	singleVersusQuestionRound.setPlayingColor(color);
-																} else {
-																	Color.logInvalid();
-																}
-															} else {
-																if (line.equalsIgnoreCase("rest")) {
-																	singleVersusQuestionRound.rest();
-																} else {
-																	Integer num = null;
-																	try {
-																		num = Integer.parseInt(line);
-																	} catch (Exception e) {}
-																	if (num != null && num >= 0 && num <= singleVersusQuestionRound.getQuestion().getAnswers().length) {
-																		singleVersusQuestionRound.addResponse(num);
-																	} else {
-																		Log.logInvalidNumber();
-																	}
-																}
-															}
-														}
-													}
-												}
+												Log.logInvalidNumber();
 											}
+										}
+									} else if (!singleVersusQuestionRound.hasPlayingColor()) {
+										Color color = Color.parse(line);
+										if (color != null && color.isTeam()) {
+											singleVersusQuestionRound.setPlayingColor(color);
+										} else {
+											Color.logInvalid();
+										}
+									} else if (line.equalsIgnoreCase("rest") || line.equalsIgnoreCase("r")) {
+										singleVersusQuestionRound.rest();
+									} else {
+										Integer num = null;
+										try {
+											num = Integer.parseInt(line);
+										} catch (Exception e) {}
+										if (num != null && num >= 0 && num <= singleVersusQuestionRound.getQuestion().getAnswers().length) {
+											singleVersusQuestionRound.addResponse(num);
+										} else {
+											Log.logInvalidNumber();
 										}
 									}
 								}
 							}
 						}
-					} else {
-						if (line.equalsIgnoreCase("start")) {
-							Game.get().startRound(new VersusRound());
-						}
+					}
+				} else {
+					if (line.equalsIgnoreCase("start") || line.equalsIgnoreCase("s")) {
+						Game.get().startRound(new VersusRound());
 					}
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				Log.info("Even though an exception occured, the application recovered, probably without damage");
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.info("Even though an exception occured, the application recovered, probably without damage");
 		}
 	}
-	
 }
